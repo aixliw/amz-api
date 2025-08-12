@@ -1,11 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Amazon SP-API Redirect</title>
+    <meta charset="UTF-8">
+    <title>Amazon SP-API OAuth Redirect</title>
 </head>
 <body>
-  <h1>OAuth Redirect Page</h1>
-  <p>This page is used for Amazon SP-API OAuth redirection.</p>
+    <h2>Amazon SP-API 授权回调</h2>
+    <div id="result"></div>
+
+    <script>
+        // 解析 URL 参数
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split("&");
+            for (const pair of pairs) {
+                const [key, value] = pair.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+            }
+            return params;
+        }
+
+        const params = getQueryParams();
+        const resultDiv = document.getElementById("result");
+
+        if (params.code) {
+            resultDiv.innerHTML = `<p><strong>授权成功！</strong></p>
+                                   <p>授权码 (code)：<code>${params.code}</code></p>
+                                   <p>卖家ID (selling_partner_id)：<code>${params.selling_partner_id || ''}</code></p>`;
+        } else if (params.error) {
+            resultDiv.innerHTML = `<p style="color:red;"><strong>授权失败：</strong> ${params.error}</p>`;
+        } else {
+            resultDiv.innerHTML = `<p>未检测到 Amazon 授权参数。</p>`;
+        }
+    </script>
 </body>
 </html>
